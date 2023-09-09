@@ -5,8 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-
-	gt "github.com/bas24/googletranslatefree"
 )
 
 const DEFAULT_MAPPING_FILENAME = "filename_mapping.csv"
@@ -134,11 +132,12 @@ func getAllFileNameFromDirectory(dir string) ([]string, error) {
 }
 
 func convertJapaneseToEnglish(filenameInJapanese string) string {
-	englishFilename, err := gt.Translate(filenameInJapanese, "ja", "en")
-	if err != nil {
-		return ""
-	}
-	return englishFilename
+	// englishFilename, err := gt.Translate(filenameInJapanese, "ja", "en")
+	// if err != nil {
+	// 	return ""
+	// }
+	// return englishFilename
+	return ""
 }
 
 func main() {
