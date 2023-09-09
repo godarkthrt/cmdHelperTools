@@ -12,7 +12,7 @@ import (
 const googleTranslateBaseUrl = "https://translate.googleapis.com/translate_a/single"
 
 // Translate is used to convert textToConvert from language passed in sourceLang to targetLang
-func Translate(sourceLang, targetLang, textToConvert string) (string, error) {
+func Translate(textToConvert, sourceLang, targetLang string) (string, error) {
 
 	googleTranslateFinalUrl := generateCompleteGoogleTranslateUrl(sourceLang, targetLang, textToConvert)
 

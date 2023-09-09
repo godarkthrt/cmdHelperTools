@@ -5,6 +5,9 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
+
+	"github.com/godarkthrt/filenameconverter/translator"
 )
 
 const DEFAULT_MAPPING_FILENAME = "filename_mapping.csv"
@@ -50,7 +53,7 @@ func NewMappingFileDataWithJapaneseFilenames(filenames []string) MappingFileData
 	var mfd MappingFileData = make([]mappingData, 0)
 	for _, fname := range filenames {
 		englishFilename := convertJapaneseToEnglish(fname)
-		mdata := mappingData{currentFileName: fname, newFileName: englishFilename}
+		mdata := mappingData{currentFileName: fname, newFileName: sanatizeFileName(englishFilename)}
 		mfd.add(mdata)
 	}
 
@@ -64,7 +67,7 @@ func (m *MappingFileData) add(data mappingData) {
 func (m *MappingFileData) save(filename string) error {
 	mappingFileName := filename
 	if len(filename) == 0 {
-		// default mapping filena
+		// default mapping filename
 		mappingFileName = DEFAULT_MAPPING_FILENAME
 	}
 	csvFile, err := os.Create(mappingFileName)
@@ -89,7 +92,7 @@ func (m *MappingFileData) save(filename string) error {
 func loadMappingDataAndRenameFiles(filename string) error {
 	mappingFileName := filename
 	if len(filename) == 0 {
-		// default mapping filena
+		// default mapping filename
 		mappingFileName = DEFAULT_MAPPING_FILENAME
 	}
 
@@ -123,21 +126,56 @@ func getAllFileNameFromDirectory(dir string) ([]string, error) {
 		return nil, fmt.Errorf("Error while getting file names for dir : %s , error : %s \n", dir, err)
 	}
 	for _, dirEntry := range dirEntries {
-		if dirEntry.IsDir() {
-			continue
-		}
+		// commenting since we need to now convert directories too
+		// if dirEntry.IsDir() {
+		// 	continue
+		// }
 		fileNames = append(fileNames, dirEntry.Name())
 	}
 	return fileNames, nil
 }
 
 func convertJapaneseToEnglish(filenameInJapanese string) string {
-	// englishFilename, err := gt.Translate(filenameInJapanese, "ja", "en")
-	// if err != nil {
-	// 	return ""
-	// }
-	// return englishFilename
-	return ""
+	englishFilename, err := translator.Translate(filenameInJapanese, "ja", "en")
+	fmt.Println("english names of file ", filenameInJapanese, " is : ", englishFilename)
+	if err != nil {
+		return ""
+	}
+	return englishFilename
+}
+
+func sanatizeFileName(rawFilename string) string {
+	newFileName := rawFilename
+
+	if strings.Contains(newFileName, "/") {
+		newFileName = strings.ReplaceAll(newFileName, "/", "_")
+	}
+	if strings.Contains(newFileName, "\\") {
+		newFileName = strings.ReplaceAll(newFileName, "\\", "_")
+	}
+	if strings.Contains(newFileName, ":") {
+		newFileName = strings.ReplaceAll(newFileName, ":", "_")
+	}
+	if strings.Contains(newFileName, "*") {
+		newFileName = strings.ReplaceAll(newFileName, "*", "_")
+	}
+	if strings.Contains(newFileName, "?") {
+		newFileName = strings.ReplaceAll(newFileName, "?", "_")
+	}
+	if strings.Contains(newFileName, "\"") {
+		newFileName = strings.ReplaceAll(newFileName, "\"", "_")
+	}
+	if strings.Contains(newFileName, "<") {
+		newFileName = strings.ReplaceAll(newFileName, "<", "_")
+	}
+	if strings.Contains(newFileName, ">") {
+		newFileName = strings.ReplaceAll(newFileName, ">", "_")
+	}
+	if strings.Contains(newFileName, "|") {
+		newFileName = strings.ReplaceAll(newFileName, "|", "_")
+	}
+
+	return newFileName
 }
 
 func main() {
@@ -165,5 +203,3 @@ func main() {
 	fmt.Println(len(files), files)
 
 }
-
-// func saveDataToMappingFile() {}

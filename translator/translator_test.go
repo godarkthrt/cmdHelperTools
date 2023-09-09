@@ -9,7 +9,7 @@ import (
 
 func TestTranslate(t *testing.T) {
 	expected := "नमस्ते !! आप कैसे हैं"
-	got, _ := translator.Translate("en", "hi", "Hello !! how are you")
+	got, _ := translator.Translate("Hello !! how are you", "en", "hi")
 
 	fmt.Println("Translated result : ", got)
 	if expected != got {
